@@ -148,7 +148,6 @@ menuf5 = {
                     if ESX.PlayerData.inventory[i].label .. " ~b~x"..count == btn.name and count > 0 then
                         if ESX.PlayerData.inventory[i].usable then
                             TriggerServerEvent('esx:useItem', ESX.PlayerData.inventory[i].name)
-                            OpenMenu("Inventaire")
                         else
                             ESX.ShowNotification('Pas utilisable', ESX.PlayerData.inventory[i].label)
                         end
