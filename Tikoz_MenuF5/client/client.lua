@@ -1501,13 +1501,11 @@ AddEventHandler('Tikoz:VetSac', function()
     end)
 end)
 
-Citizen.CreateThread(function()
-    while true do
-        if IsControlJustPressed(1, Config.Key) then
-            CreateMenu(menuf5)
-        end 
-        Citizen.Wait(0)
-    end
-end)
+RegisterCommand('Tikoz:OpenMenu', function()
+    CreateMenu(menuf5)
+end, false)
+RegisterKeyMapping('Tikoz:OpenMenu', 'Menu Radial', 'keyboard', 'F5')
+
+
     
 
