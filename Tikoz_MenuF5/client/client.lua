@@ -1325,7 +1325,6 @@ end,
             b = {
                 {name = "Liste des véhicules", ask = ">", askX = true},
                 {name = "Couleur", ask = ">", askX = true},
-                {name = "Véhicule invincible", checkbox = false},
                 {name = "Réparé", ask = "", askX = true},
                 {name = "Puissance moteur", slidemax = {"Normal", "x2", "x4", "x8", "x16"}},
                 {name = "Supprimé le véhicule", ask = "", askX = true},
