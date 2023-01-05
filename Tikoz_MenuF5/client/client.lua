@@ -117,6 +117,53 @@ ESX.TriggerServerCallback('Tikoz:getOtherPlayerData', function(data)
 	end
 end)
 
+function factureetreprisetikoz()
+    local amount = KeyboardInput("Entrer le montant", "Entrer le montant", "", 15)
+    
+    if not amount then
+      ESX.ShowNotification('~r~Montant invalide')
+    else
+  
+      local closestPlayer, closestDistance = ESX.Game.GetClosestPlayer()
+  
+        if closestPlayer == -1 or closestDistance > 3.0 then
+          ESX.ShowNotification('Pas de joueurs à ~b~proximité')
+        else
+          local playerPed = PlayerPedId()
+  
+            CreateThread(function()
+              ClearPedTasks(playerPed)
+              TriggerServerEvent('esx_billing:sendBill', GetPlayerServerId(closestPlayer), 'society_'..ESX.PlayerData.job.name, "~b~"..ESX.PlayerData.job.label, amount)
+              ESX.ShowNotification("Vous avez bien envoyer la ~b~facture")
+            end)
+        end
+    end
+end
+
+function facturepersonelletikoz()
+    local amount = KeyboardInput("Entrer le montant", "Entrer le montant", "", 15)
+    
+    if not amount then
+      ESX.ShowNotification('~r~Montant invalide')
+    else
+  
+      local closestPlayer, closestDistance = ESX.Game.GetClosestPlayer()
+  
+        if closestPlayer == -1 or closestDistance > 3.0 then
+          ESX.ShowNotification('Pas de joueurs à ~b~proximité')
+        else
+          local playerPed = PlayerPedId()
+  
+            Citizen.CreateThread(function()
+           
+              ClearPedTasks(playerPed)
+              TriggerServerEvent('esx_billing:sendBill', GetPlayerServerId(closestPlayer), PlayerPedId(), "~b~"..GetPlayerName(PlayerId()), amount)
+              ESX.ShowNotification("Vous avez bien envoyer la ~b~facture")
+            end)
+        end
+    end
+end
+
 menuf5 = {
     Base = { Header = {"commonmenu", "interaction_bgd"}, Color = {color_black}, HeaderColor = {0, 251, 255}, Title = "Sac à Dos"},
     Data = { currentMenu = "Menu", "Test"},
@@ -307,25 +354,6 @@ menuf5 = {
                 ESX.PlayerData = ESX.GetPlayerData()
                 RefreshMoney()
                 menuf5.Menu["Portefeuille"].b = {}
-
-                -- Si vous êtes en legacy et que l'argent s'affiche pas dans le portefeuille, enlever les commentaires en dessous,
-                -- et retiré les 3 lignes table.insert ( ligne : 330, 331, 332)
-
-                -- for i = 1, #ESX.PlayerData.accounts, 1 do
-                --     if ESX.PlayerData.accounts[i].name == 'money' then
-                --         table.insert(menuf5.Menu["Portefeuille"].b, { name = "Liquide :  ~g~"..ESX.Math.GroupDigits(ESX.PlayerData.accounts[i].money).."$",slidemax = { "Donner", "Jeter" } })
-    
-                --     end
-    
-                --     if ESX.PlayerData.accounts[i].name == 'bank' then
-                --         table.insert(menuf5.Menu["Portefeuille"].b, { name = "Banque :  ~o~" ..ESX.PlayerData.accounts[i].money.."$",ask = "" , askX =  true}) 
-                --     end
-    
-                --     if ESX.PlayerData.accounts[i].name == 'black_money' then
-                --         table.insert(menuf5.Menu["Portefeuille"].b, { name = "Argent sale : ~r~" ..ESX.PlayerData.accounts[i].money.."$", slidemax = { "Donner", "Jeter" } })
-
-                --     end
-                -- end
 
                 table.insert(menuf5.Menu["Portefeuille"].b, { name = "Liquide :  ~g~" .. ESX.Math.GroupDigits(ESX.PlayerData.money).."$",slidemax = { "Donner", "Jeter" } })
                 table.insert(menuf5.Menu["Portefeuille"].b, { name = "Banque :  ~o~" .. ESX.Math.GroupDigits(ESX.PlayerData.accounts[1].money).."$",ask = "" , askX =  true}) 
@@ -1214,14 +1242,78 @@ menuf5 = {
             end
 
 
+            if btn.name == "Allumer/Éteindre le moteur" and btn.checkbox == false then
+                local ped = PlayerPedId()
+                local veh = GetVehiclePedIsIn(ped, false)
+                SetVehicleEngineOn(veh, true, false, true)
+            elseif btn.name == "Allumer/Éteindre le moteur" and btn.checkbox == true then
+                local ped = PlayerPedId()
+                local veh = GetVehiclePedIsIn(ped, false)
+                SetVehicleEngineOn(veh, false, false, true)
+            end
+
+            if btn.name == "Ouvrir/Fermé" and btn.slidename == "Porte avant gauche" then
+                if not tik then
+                    tik = true
+                    SetVehicleDoorOpen(GetVehiclePedIsIn(PlayerPedId()), 0, false, false)
+                elseif tik then
+                    tik = false
+                    SetVehicleDoorShut(GetVehiclePedIsIn(PlayerPedId()), 0, true, true)
+                end
+            elseif btn.name == "Ouvrir/Fermé" and btn.slidename == "Porte avant droite" then
+                if not tik then
+                    tik = true
+                    SetVehicleDoorOpen(GetVehiclePedIsIn(PlayerPedId()), 1, false, false)
+                elseif tik then
+                    tik = false
+                    SetVehicleDoorShut(GetVehiclePedIsIn(PlayerPedId()), 1, true, true)
+                end
+            elseif btn.name == "Ouvrir/Fermé" and btn.slidename == "Porte arrière droite" then
+                if not tik then
+                    tik = true
+                    SetVehicleDoorOpen(GetVehiclePedIsIn(PlayerPedId()), 3, false, false)
+                elseif tik then
+                    tik = false
+                    SetVehicleDoorShut(GetVehiclePedIsIn(PlayerPedId()), 3, true, true)
+                end
+            elseif btn.name == "Ouvrir/Fermé" and btn.slidename == "Porte arrière gauche" then
+                if not tik then
+                    tik = true
+                    SetVehicleDoorOpen(GetVehiclePedIsIn(PlayerPedId()), 2, false, false)
+                elseif tik then
+                    tik = false
+                    SetVehicleDoorShut(GetVehiclePedIsIn(PlayerPedId()), 2, true, true)
+                end
+            elseif btn.name == "Ouvrir/Fermé" and btn.slidename == "Capot" then
+                if not tik then
+                    tik = true
+                    SetVehicleDoorOpen(GetVehiclePedIsIn(PlayerPedId()), 4, false, false)
+                elseif tik then
+                    tik = false
+                    SetVehicleDoorShut(GetVehiclePedIsIn(PlayerPedId()), 4, true, true)
+                end
+            elseif btn.name == "Ouvrir/Fermé" and btn.slidename == "Coffre" then
+                if not tik then
+                    tik = true
+                    SetVehicleDoorOpen(GetVehiclePedIsIn(PlayerPedId()), 5, false, false)
+                elseif tik then
+                    tik = false
+                    SetVehicleDoorShut(GetVehiclePedIsIn(PlayerPedId()), 5, true, true)
+                end
+            end
+            
             ESX.TriggerServerCallback("Tikoz:facture", function(bills) 
 
                 if btn.name == "Facture" then
-                    menuf5.Menu["Facture"].b = {}
-                    for i=1, #bills, 1 do
-                        table.insert(menuf5.Menu["Facture"].b, { name = bills[i].label, ask = "~g~"..bills[i].amount.."$", askX = true})
-                    end
                     OpenMenu('Facture') 
+                elseif btn.name == "Faire une facture" then
+                    OpenMenu("Faire une facture")
+                elseif btn.name == "Mes factures" then      
+                    menuf5.Menu["Mes factures"].b = {}
+                    for i=1, #bills, 1 do
+                        table.insert(menuf5.Menu["Mes factures"].b, { name = bills[i].label, ask = "~g~"..bills[i].amount.."$", askX = true})
+                    end
+                    OpenMenu("Mes factures")
                 end
 
                 for i=1, #bills, 1 do
@@ -1229,10 +1321,15 @@ menuf5 = {
                         ESX.TriggerServerCallback('esx_billing:payBill', function() 
                         end,bills[i].id)
                         return
-                        OpenMenu("Menu")
+                        OpenMenu("Facture")
                     end
                 end
 
+                if btn.name == "Facture ~b~personelle" then
+                    facturepersonelletikoz()
+                elseif btn.name == "Facture ~b~entreprise" then
+                    factureetreprisetikoz()
+                end
             end, args)
 
 end,
@@ -1244,6 +1341,7 @@ end,
                 {name = "Portefeuille", ask = ">", askX = true},
                 {name = "Facture", ask = ">", askX = true},
                 {name = "Gestion arme", ask = ">", askX = true},
+                {name = "Gestion véhicule", ask = ">", askX = true},
                 {name = "Vêtement", ask = ">", askX = true},
                 {name = "Gestion d'entreprise", ask = ">", askX = true},
                 {name = "Gestion gang", ask = ">", askX = true},
@@ -1254,7 +1352,25 @@ end,
             b = {
             }
         },
+        ["gestion véhicule"] = {
+            b = {
+                {name = "Ouvrir/Fermé", slidemax = {"Porte avant gauche", "Porte avant droite", "Porte arrière gauche", "Porte arrière droite", "Capot", "Coffre"}},
+                {name = "Allumer/Éteindre le moteur", checkbox = false},
+            }
+        },
         ["Facture"] = {
+            b = {
+                {name = "Faire une facture", ask = ">", askX = true},
+                {name = "Mes factures", ask = ">", askX = true},
+            }
+        },
+        ["Faire une facture"] = {
+            b = {
+                {name = "Facture ~b~personelle", ask = "", askX = true},
+                {name = "Facture ~b~entreprise", ask = "", askX = true},
+            }
+        },
+        ["Mes factures"] = {
             b = {
             }
         },
