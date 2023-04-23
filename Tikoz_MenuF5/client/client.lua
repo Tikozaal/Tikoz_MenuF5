@@ -1026,7 +1026,7 @@ menuf5 = {
                         local pipo = CreateVehicle(po, pos, h, true, false)
                         TaskWarpPedIntoVehicle(PlayerPedId(), pipo, -1)
                         SetVehRadioStation(pipo, 'OFF')
-                        
+                        return
                     end
                 end
 
